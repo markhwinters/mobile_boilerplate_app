@@ -1,8 +1,9 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { Home, Search, User } from "lucide-react-native";
 import React from "react";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
+import { useAuth } from "@clerk/clerk-expo";
 import type { LucideProps } from "lucide-react-native";
 import type { ComponentType } from "react";
 
@@ -31,6 +32,19 @@ export const TabIcon = ({ focused, Icon, title }: TabIconProps) => {
 };
 
 export default function TabsLayout() {
+  const { isLoaded, isSignedIn } = useAuth();
+
+  if (!isLoaded) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)/welcome" />;
+  }
   return (
     <Tabs
       screenOptions={{
